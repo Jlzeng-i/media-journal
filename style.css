@@ -1,0 +1,27 @@
+body {
+  font-family: Arial, sans-serif;
+  padding: 10px;
+}
+
+button {
+  margin-bottom: 10px;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+li {
+  cursor: pointer;
+  padding: 5px;
+  border-bottom: 1px solid #ccc;
+}
+
+li:last-child {
+  border-bottom: none;
+}
+
+li:hover {
+  background-color: #f0f0f0;
+}

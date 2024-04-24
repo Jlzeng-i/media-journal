@@ -1,0 +1,11 @@
+{
+  "manifest_version": 3,
+  "name": "Timesink Tracker",
+  "version": "0.1",
+  "description": "Allows users to manually track tabs and their screentime",
+  "permissions": ["storage", "tabs"],
+  "action": {
+    "default_popup": "popup.html"
+  }
+}
+
