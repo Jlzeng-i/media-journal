@@ -101,11 +101,11 @@ document.addEventListener('DOMContentLoaded', function() {
 	addNewPageBtn.addEventListener('click', function() {
 	  const newPageName = newPageNameInput.value.trim();
 	  if (!newPageName) {
-		console.log('Please enter a page name.');
+		//console.log('Please enter a page name.');
 		return;
 	  }
 	  if (pages.includes(newPageName)) {
-		console.log('Page name already exists.');
+		//console.log('Page name already exists.');
 		return;
 	  }
 	  pages.push(newPageName);
