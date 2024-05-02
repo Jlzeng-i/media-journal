@@ -1,11 +1,10 @@
 {
   "manifest_version": 3,
-  "name": "Timesink Tracker",
-  "version": "0.1",
-  "description": "Allows users to manually track tabs and their screentime",
-  "permissions": ["storage", "tabs"],
+  "name": "Medari",
+  "version": "0.4",
+  "description": "Create Med(ia) (Di)ari(es) in a flash",
+  "permissions": ["storage"],
   "action": {
     "default_popup": "popup.html"
   }
 }
-

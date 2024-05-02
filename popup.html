@@ -3,18 +3,42 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tab Saver</title>
-  <link rel="stylesheet" href="styles.css">
+  <title>Medari</title>
+  <link rel="stylesheet" href="popup.css">
 </head>
 <body>
-  <button id="saveTabBtn">Save Current Tab</button>
-  <ul id="savedTabsList"></ul>
-  <button id="removeSelectedBtn">Remove Selected</button>
-  <input type="text" id="newPageName" placeholder="Enter page name">
-  <button id="addNewPageBtn">Add Page</button>
-  <select id="pageDropdown"></select>
-  
-
+  <div class="container">
+    <h1>Medari</h1>
+	<div>
+		<label for="startTime">Start Time:</label>
+		<input type="text" id="startTime" pattern="^(?:2[0-3]|[01]?[0-9]):[0-5][0-9]$" placeholder="hh:mm" required>
+	</div>
+	<div>
+		<label for="stopTime">Stop Time:</label>
+		<input type="text" id="stopTime" pattern="^(?:2[0-3]|[01]?[0-9]):[0-5][0-9]$" placeholder="hh:mm" required>
+	</div>
+	<div>
+		<label for="label">Label:</label>
+		<input type="text" id="label" placeholder="Enter a label for this entry">
+	</div>
+	<div>
+		<label for="notes">Notes:</label>
+		<textarea id="notes" rows="3" placeholder="Enter any notes"></textarea>
+	</div>
+	<button id="addEntry">Add Entry</button>
+	<div>
+		<label for="pageLabel">Page Label:</label>
+		<input type="text" id="pageLabel" placeholder="defaults to mm/dd/yyyy">
+		<button id="addPage">Add Page</button>
+		<button id="delPage">Delete Page</button>
+	</div>
+	<div>
+		<label for="pageDropdown">Select Page:</label>
+		<select id="pageDropdown"></select>
+	</div>
+	<div id="entries"></div>
+	<div id="totalTime"></div>
+</div>
   <script src="popup.js"></script>
 </body>
 </html>

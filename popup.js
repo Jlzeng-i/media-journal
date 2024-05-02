@@ -1,128 +1,139 @@
 document.addEventListener('DOMContentLoaded', function() {
-  const saveTabBtn = document.getElementById('saveTabBtn');
-  const removeSelectedBtn = document.getElementById('removeSelectedBtn');
-  const savedTabsList = document.getElementById('savedTabsList');
-  const newPageNameInput = document.getElementById('newPageName');
-  const addNewPageBtn = document.getElementById('addNewPageBtn');
-  const pageDropdown = document.getElementById('pageDropdown');
+  loadEntries();
+  loadPages();
 
-  let pages = [];
-
-  // Load from storage
-  chrome.storage.sync.get(['savedTabs', 'pages'], function(data) {
-    const savedTabs = data.savedTabs || [];
-    pages = data.pages || [];
-    updatePageDropdown();
-    //displaySavedTabs(savedTabs);
+  document.getElementById('addEntry').addEventListener('click', function() {
+    addEntry();
   });
 
-  // Save Current Tab
-  saveTabBtn.addEventListener('click', function() {
-    chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
-      const currentTab = tabs[0];
-      const savedTab = {
-        id: currentTab.id,
-        title: currentTab.title,
-        url: currentTab.url,
-        timestamp: Date.now()
-      };
-      chrome.storage.sync.get('savedTabs', function(data) {
-        const savedTabs = data.savedTabs || [];
-        savedTabs.push(savedTab);
-        chrome.storage.sync.set({ 'savedTabs': savedTabs });
-        displaySavedTabs(savedTabs);
-      });
+  document.getElementById('addPage').addEventListener('click', function() {
+    addPage();
+  });
+  
+  document.getElementById('delPage').addEventListener('click', function() {
+    deletePage();
+  });
+  
+  document.getElementById('pageDropdown').addEventListener('change', function() {
+    const selectedPage = this.value;
+    loadEntries(selectedPage);
+  });
+
+});
+
+function addEntry() {
+  const label = document.getElementById('label').value;
+  const start = document.getElementById('startTime').value;
+  const stop = document.getElementById('stopTime').value;
+  const notes = document.getElementById('notes').value;
+  const page = document.getElementById('pageDropdown').value;
+  
+  if (!label || !start || !stop) {
+    alert('Please fill in all fields.');
+    return;
+  }
+
+  const entry = { label, start, stop, notes, page };
+
+  // Save entry to account
+  chrome.storage.sync.get('entries', function(result) {
+    const entries = result.entries || [];
+    entries.push(entry);
+    chrome.storage.sync.set({ 'entries': entries }, function() {
+      loadEntries(page);
     });
   });
-	  function displaySavedTabs(tabs) {
-		savedTabsList.innerHTML = '';
-		tabs.forEach(function(tab) {
-		  const listItem = document.createElement('li');
-		  const checkbox = document.createElement('input');
-		  checkbox.type = 'checkbox';
-		  checkbox.value = tab.id;
-		  listItem.appendChild(checkbox);
-		  listItem.appendChild(document.createTextNode(tab.title));
-		  listItem.addEventListener('click', function(event) {
-			if (event.target !== checkbox) {
-			  chrome.tabs.create({ url: tab.url });
-			}
-		  });
-		  savedTabsList.appendChild(listItem);
-		});
-	  }
-	function displaySavedTabsForPage(page) {
-	  chrome.storage.sync.get('savedTabs', function(data) {
-		const savedTabs = data.savedTabs || [];
-		const tabsForPage = savedTabs.filter(tab => tab.page === page);
-		displaySavedTabs(tabsForPage);
-	  });
+}
+
+
+function loadEntries(pageLabel = null) {
+  chrome.storage.sync.get('entries', function(result) {
+    const entries = result.entries || [];
+    const entriesContainer = document.getElementById('entries');
+    entriesContainer.innerHTML = '';
+
+    // Check if value is All Pages and ignore it if it is
+	if (pageLabel && pageLabel == 'All Pages') {
+	pageLabel = null;
 	}
+    const filteredEntries = pageLabel ? entries.filter(entry => entry.page === pageLabel) : entries;
+	
+    // Display entries
+    filteredEntries.forEach(function(entry) {
+      const entryDiv = document.createElement('div');
+      entryDiv.classList.add('entry');
+      entryDiv.innerHTML = `
+        <div class="label">Label: ${entry.label}</div>
+        <div class="timestamp">Start: ${entry.start} - Stop: ${entry.stop}</div>
+        <div class="notes">Notes: ${entry.notes}</div>
+      `;
+      entriesContainer.appendChild(entryDiv);
+    });
+  });
+}
 
-	pageDropdown.addEventListener('change', function() {
-	  const selectedPage = pageDropdown.value;
-	  displaySavedTabsForPage(selectedPage);
-	});
+function loadPages() {
+  chrome.storage.sync.get('pages', function(result) {
+    const pages = result.pages || [];
+    const pageDropdown = document.getElementById('pageDropdown');
+    pageDropdown.innerHTML = '';
+	
+	//Create the All Pages option by default
+    const defaultOption = document.createElement('option');
+    defaultOption.text = 'All Pages';
+    pageDropdown.add(defaultOption);
 
-	saveTabBtn.addEventListener('click', function() {
-	  chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
-		const currentTab = tabs[0];
-		const savedTab = {
-		  id: currentTab.id,
-		  title: currentTab.title,
-		  url: currentTab.url,
-		  timestamp: Date.now(),
-		  page: pageDropdown.value 
-		};
-		chrome.storage.sync.get('savedTabs', function(data) {
-		  const savedTabs = data.savedTabs || [];
-		  savedTabs.push(savedTab);
-		  chrome.storage.sync.set({ 'savedTabs': savedTabs });
-		  displaySavedTabsForPage(savedTab.page); 
-		});
-	  });
-	});
+    // load every page
+    pages.forEach(function(page) {
+      const option = document.createElement('option');
+      option.text = page.label;
+      pageDropdown.add(option);
+    });
+  });
+}
 
-	removeSelectedBtn.addEventListener('click', function() {
-	  const checkboxes = savedTabsList.querySelectorAll('input[type="checkbox"]:checked');
-	  const tabIdsToRemove = Array.from(checkboxes).map(checkbox => parseInt(checkbox.value));
-	  removeTabs(tabIdsToRemove);
-	});
-
-	function removeTabs(tabIds) {
-	  chrome.storage.sync.get('savedTabs', function(data) {
-		const savedTabs = data.savedTabs || [];
-		const updatedTabs = savedTabs.filter(tab => !tabIds.includes(tab.id));
-		chrome.storage.sync.set({ 'savedTabs': updatedTabs });
-		displaySavedTabsForPage(pageDropdown.value); // Display saved tabs for the selected page
-	  });
+function addPage() {
+	//Defaults page label to current date 
+  const pageLabel = document.getElementById('pageLabel').value || new Date().toLocaleDateString('en-US');
+  
+  // Save page to storage
+  chrome.storage.sync.get('pages', function(result) {
+    const pages = result.pages || [];
+	const pageExists = pages.some(page => page.label === pageLabel);
+	//check if page exists so no duplicates can exist
+	if (!pageExists) {
+    const newPage = { label: pageLabel };
+    pages.push(newPage);
+    chrome.storage.sync.set({ 'pages': pages }, function() {
+      loadPages(); // Refresh pages after adding new page
+	  
+	  
+	  //TODO set the page value to the new page immediately cuz this dont work
+	  const selectedPage = newPage;
+      loadEntries(selectedPage);
+      //loadEntries(pageLabel); // Load entries for the new page
+    });
+	} else {
+      alert('Page already exists!');
 	}
+  });
+}
 
-	addNewPageBtn.addEventListener('click', function() {
-	  const newPageName = newPageNameInput.value.trim();
-	  if (!newPageName) {
-		//console.log('Please enter a page name.');
-		return;
-	  }
-	  if (pages.includes(newPageName)) {
-		//console.log('Page name already exists.');
-		return;
-	  }
-	  pages.push(newPageName);
-	  chrome.storage.sync.set({ 'pages': pages });
-	  updatePageDropdown();
-	  newPageNameInput.value = '';
-	});
+// Function to delete a page and its associated entries
+function deletePage() {
+  pageLabel = document.getElementById('pageDropdown').value;
+  chrome.storage.sync.get(['pages', 'entries'], function(result) {
+    let pages = result.pages || [];
+    let entries = result.entries || [];
 
-	function updatePageDropdown() {
-	  pageDropdown.innerHTML = '';
-	  pages.forEach(function(page) {
-		const option = document.createElement('option');
-		option.value = page;
-		option.textContent = page;
-		pageDropdown.appendChild(option);
-	  });
-	}
-	//Initialize
-	updatePageDropdown();
-});
+    // Filter out the page and its associated entries
+    pages = pages.filter(page => page.label !== pageLabel);
+    entries = entries.filter(entry => entry.label !== pageLabel);
+
+    // Save updated data
+    chrome.storage.sync.set({ 'pages': pages, 'entries': entries }, function() {
+      loadPages(); // Refresh pages after deletion
+      loadEntries(); // Load entries for remaining pages
+    });
+  });
+}
