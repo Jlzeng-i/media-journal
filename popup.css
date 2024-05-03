@@ -12,14 +12,14 @@
 
 /* Style for icon images */
 .icon-button img {
-  width: 350%; /* Set image width to 100% of the button width */
-  height: auto; /* Set image height to 100% of the button height */
+  width: 350%; 
+  height: auto;
   object-fit: contain; 
 }
 
 /* Change brightness of icon image on hover */
 .icon-button:hover img {
-  filter: brightness(80%); /* Adjust brightness on hover */
+  filter: brightness(80%);
 }
 /* Other styles */
 body {
@@ -29,7 +29,7 @@ body {
 }
 
 .container {
-  max-width: 800px; /* Increase the max-width to accommodate the sidebar and main content */
+  max-width: 800px; /* Change extension width */
   margin: 20px auto;
   padding: 20px;
   border: 1px solid #ccc;
