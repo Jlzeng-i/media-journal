@@ -1,3 +1,27 @@
+.icon-button {
+  display: inline-block;
+  width: 25px;
+  height: 25px;
+  padding: 10px;
+  margin-bottom: 10px;
+  text-align: center;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+/* Style for icon images */
+.icon-button img {
+  width: 350%; /* Set image width to 100% of the button width */
+  height: auto; /* Set image height to 100% of the button height */
+  object-fit: contain; 
+}
+
+/* Change brightness of icon image on hover */
+.icon-button:hover img {
+  filter: brightness(80%); /* Adjust brightness on hover */
+}
+/* Other styles */
 body {
   font-family: Arial, sans-serif;
   margin: 0;
@@ -5,7 +29,7 @@ body {
 }
 
 .container {
-  max-width: 400px;
+  max-width: 800px; /* Increase the max-width to accommodate the sidebar and main content */
   margin: 20px auto;
   padding: 20px;
   border: 1px solid #ccc;

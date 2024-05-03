@@ -13,7 +13,30 @@ document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('delPage').addEventListener('click', function() {
     deletePage();
   });
-  
+  document.getElementById('youtube').addEventListener('click', function() {
+    var labelTextBox = document.getElementById('label');
+    labelTextBox.value = "YouTube";
+  });
+  document.getElementById('tiktok').addEventListener('click', function() {
+    var labelTextBox = document.getElementById('label');
+    labelTextBox.value = "TikTok";
+  });
+  document.getElementById('twitter').addEventListener('click', function() {
+    var labelTextBox = document.getElementById('label');
+    labelTextBox.value = "Twitter";
+  });
+  document.getElementById('instagram').addEventListener('click', function() {
+    var labelTextBox = document.getElementById('label');
+    labelTextBox.value = "Instagram";
+  });
+  document.getElementById('facebook').addEventListener('click', function() {
+    var labelTextBox = document.getElementById('label');
+    labelTextBox.value = "Facebook";
+  });
+  document.getElementById('gaming').addEventListener('click', function() {
+    var labelTextBox = document.getElementById('label');
+    labelTextBox.value = "Video Games";
+  });
   document.getElementById('pageDropdown').addEventListener('change', function() {
     const selectedPage = this.value;
     loadEntries(selectedPage);
