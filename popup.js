@@ -157,10 +157,12 @@ function addPage() {
 
 // Function to delete a page and its associated entries
 function deletePage() {
-  pageLabel = document.getElementById('pageDropdown').value;
-  chrome.storage.sync.get(['pages', 'entries'], function(result) {
-    let pages = result.pages || [];
-    let entries = result.entries || [];
+  const confirmDelete = confirm('Are you sure you want to delete this page?');
+      if (confirmDelete) {
+        pageLabel = document.getElementById('pageDropdown').value;
+		chrome.storage.sync.get(['pages', 'entries'], function(result) {
+		let pages = result.pages || [];
+		let entries = result.entries || [];
 
     // Filter out the page and its associated entries
     pages = pages.filter(page => page.label !== pageLabel);
@@ -172,6 +174,7 @@ function deletePage() {
       loadEntries(); // Load entries for remaining pages
     });
   });
+      }
 }
 
 function deleteEntry(entryDiv) {
