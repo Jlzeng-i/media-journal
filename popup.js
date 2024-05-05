@@ -44,6 +44,19 @@ document.addEventListener('DOMContentLoaded', function() {
 
 });
 
+//TESTING DELETING ENTRIES
+const entriesContainer = document.getElementById('entries');
+  entriesContainer.addEventListener('contextmenu', function(event) {
+    event.preventDefault();
+    const entryDiv = event.target.closest('.entry');
+    if (entryDiv) {
+      const confirmDelete = confirm('Are you sure you want to delete this entry?');
+      if (confirmDelete) {
+        deleteEntry(entryDiv);
+      }
+    }
+  });
+
 function addEntry() {
   const label = document.getElementById('label').value;
   const start = document.getElementById('startTime').value;
@@ -157,6 +170,20 @@ function deletePage() {
     chrome.storage.sync.set({ 'pages': pages, 'entries': entries }, function() {
       loadPages(); // Refresh pages after deletion
       loadEntries(); // Load entries for remaining pages
+    });
+  });
+}
+
+function deleteEntry(entryDiv) {
+  const label = entryDiv.querySelector('.label').textContent.split(':')[1].trim();
+  const start = entryDiv.querySelector('.timestamp').textContent.split('Start:')[1].split('-')[0].trim();
+  const stop = entryDiv.querySelector('.timestamp').textContent.split('Stop:')[1].trim();
+
+  chrome.storage.sync.get('entries', function(result) {
+    const entries = result.entries || [];
+    const updatedEntries = entries.filter(entry => !(entry.label === label && entry.start === start && entry.stop === stop));
+    chrome.storage.sync.set({ 'entries': updatedEntries }, function() {
+      loadEntries();
     });
   });
 }
